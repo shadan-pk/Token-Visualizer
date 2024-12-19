@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Token Visualization</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Token Visualization</h1>
+
+        <div class="input-section">
+            <textarea id="inputText" placeholder="Enter text to tokenize"></textarea>
+
+            <select id="modelSelect">
+                <option value="bert-base-uncased">BERT Base Uncased</option>
+                <option value="roberta-base">RoBERTa Base</option>
+                <option value="distilbert-base-uncased">DistilBERT Base</option>
+            </select>
+
+            <button onclick="tokenizeText()">Tokenize</button>
+        </div>
+
+        <div id="output" class="output-section"></div>
+    </div>
+
+    <script>
+        async function tokenizeText() {
+            const text = document.getElementById('inputText').value;
+            const model = document.getElementById('modelSelect').value;
+            const outputDiv = document.getElementById('output');
+            
+            outputDiv.innerHTML = 'Processing...';
+
+            const response = await fetch('/tokenize', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ text: text, model: model })
+            });
+
+            const data = await response.json();
+            outputDiv.innerHTML = data.map(item => 
+                `<span style="background-color:${item.color}; padding:2px; margin:1px; border-radius:3px;">
+                    ${item.token}
+                </span>`
+            ).join(' ');
+        }
+    </script>
+</body>
+</html>
