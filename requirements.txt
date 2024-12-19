@@ -1,0 +1,7 @@
+Flask==2.3.2
+torch==2.1.0
+transformers==4.37.0
+matplotlib==3.7.1
+ipywidgets==8.0.0
+huggingface_hub==0.16.4
+flask-cors==3.1.1
