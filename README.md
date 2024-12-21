@@ -26,3 +26,26 @@ Additionally, you will need to install the required Python libraries. These can 
 
 ```bash
 pip install -r requirements.txt
+```
+
+## Deployment Instructions -- Windows
+
+1.Set Environment Variables:
+  Set the environment variables for Flask. In the command prompt, run:
+
+```
+set FLASK_APP=app.py
+set FLASK_ENV=development
+```
+
+2.Run the Flask Application:
+  Start the Flask application by running the following command:
+
+```
+flask run
+```
+
+This will start the Flask server, and you can access your application in the browser at 
+```
+http://127.0.0.1:5000/.
+```
