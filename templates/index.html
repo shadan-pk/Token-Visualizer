@@ -13,19 +13,30 @@
         <div class="input-section">
             <textarea id="inputText" placeholder="Enter text to tokenize"></textarea>
 
-            <select id="modelSelect">
-                <option value="bert-base-uncased">BERT Base Uncased</option>
-                <option value="roberta-base">RoBERTa Base</option>
-                <option value="distilbert-base-uncased">DistilBERT Base</option>
-            </select>
-
-            <button onclick="tokenizeText()">Tokenize</button>
+            <div class="box">
+                <select id="modelSelect" class="custom-select">
+                    <option value="chatgpt">ChatGPT</option>
+                    <option value="llama-3.2">LLaMA 3.2</option>
+                    <option value="mistral">Mistral</option>
+                </select>
+                <button class="custom-button" onclick="tokenizeText()">Tokenize</button>
+            </div>
+                
+            
         </div>
 
         <div id="output" class="output-section"></div>
     </div>
 
     <script>
+        function autoResizeTextarea() {
+            const textarea = document.getElementById('inputText');
+            textarea.style.height = 'auto';
+            textarea.style.height = textarea.scrollHeight + 'px';
+        }
+
+        document.getElementById('inputText').addEventListener('input', autoResizeTextarea);
+
         async function tokenizeText() {
             const text = document.getElementById('inputText').value;
             const model = document.getElementById('modelSelect').value;
@@ -40,11 +51,17 @@
             });
 
             const data = await response.json();
-            outputDiv.innerHTML = data.map(item => 
-                `<span style="background-color:${item.color}; padding:2px; margin:1px; border-radius:3px;">
-                    ${item.token}
-                </span>`
-            ).join(' ');
+            if (data.error) {
+                outputDiv.innerHTML = `<span style="color:red;">Error: ${data.error}</span>`;
+            } else {
+                const tokens = data.tokens;
+                const colors = data.colors;
+                outputDiv.innerHTML = tokens.map((token, index) => 
+                    `<span class="token" style="background-color:${colors[index]};">
+                        ${token}
+                    </span>`
+                ).join(' ');
+            }
         }
     </script>
 </body>

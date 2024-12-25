@@ -1,34 +1,37 @@
-from flask import Flask, request, render_template, jsonify
+import random
+from flask import Flask, request, jsonify, render_template
 import torch
 from transformers import AutoTokenizer, AutoModel
-import matplotlib.colors as mcolors
-import matplotlib.pyplot as plt
-import os
 
 app = Flask(__name__)
 
-# Load environment variables
-DEBUG_MODE = os.getenv('DEBUG_MODE', 'False').lower() in ['true', '1', 't']
-PORT = int(os.getenv('PORT', 5000))
-
-# Cache for models and tokenizers
 model_cache = {}
 
-# Function to get the model and tokenizer based on selection
 def get_model_and_tokenizer(model_name):
     if model_name in model_cache:
         return model_cache[model_name]
-
-    model_mapping = {
-        'bert-base-uncased': 'bert-base-uncased',
-        'roberta-base': 'roberta-base',
-        'distilbert-base-uncased': 'distilbert-base-uncased'
-    }
-    selected_model = model_mapping.get(model_name, 'bert-base-uncased')
-    tokenizer = AutoTokenizer.from_pretrained(selected_model)
-    model = AutoModel.from_pretrained(selected_model)
+    
+    if model_name == 'chatgpt':
+        # Placeholder for ChatGPT model loading
+        tokenizer = AutoTokenizer.from_pretrained('gpt2')
+        model = AutoModel.from_pretrained('gpt2')
+    elif model_name == 'llama-3.2':
+        # Placeholder for LLaMA 3.2 model loading
+        tokenizer = AutoTokenizer.from_pretrained('facebook/opt-125m')  # Replace with actual LLaMA model identifier
+        model = AutoModel.from_pretrained('facebook/opt-125m')  # Replace with actual LLaMA model identifier
+    elif model_name == 'mistral':
+        # Placeholder for Mistral model loading
+        tokenizer = AutoTokenizer.from_pretrained('roberta-base')  # Replace with actual Mistral model identifier
+        model = AutoModel.from_pretrained('roberta-base')  # Replace with actual Mistral model identifier
+    else:
+        tokenizer = AutoTokenizer.from_pretrained(model_name)
+        model = AutoModel.from_pretrained(model_name)
+    
     model_cache[model_name] = (tokenizer, model)
     return tokenizer, model
+
+def generate_color():
+    return "#{:06x}".format(random.randint(0, 0xFFFFFF))
 
 @app.route('/')
 def index():
@@ -67,17 +70,22 @@ def tokenize():
         # Normalize weights
         filtered_weights = (filtered_weights - filtered_weights.min()) / (filtered_weights.max() - filtered_weights.min())
 
+        # Clean tokens
+        cleaned_tokens = [token.replace('Ġ', '') for token in filtered_tokens]
+
         # Generate color map
-        color_map = plt.cm.viridis(filtered_weights)
-        hex_colors = [mcolors.rgb2hex(color[:3]) for color in color_map]
+        token_colors = [generate_color() for _ in cleaned_tokens]
 
-        # Create response data
-        colored_tokens = [{'token': token, 'color': color} for token, color in zip(filtered_tokens, hex_colors)]
+        # Create response
+        response = {
+            'tokens': cleaned_tokens,
+            'weights': filtered_weights.tolist(),
+            'colors': token_colors
+        }
 
-        return jsonify(colored_tokens)
-
+        return jsonify(response)
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':
-    app.run(debug=DEBUG_MODE, port=PORT)
+    app.run(debug=True)
