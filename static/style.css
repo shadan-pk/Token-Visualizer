@@ -1,6 +1,7 @@
 body {
     font-family: Arial, sans-serif;
-    background: linear-gradient(135deg, #0f0f0f 25%, #020202 100%);
+    background-color: #fafafa;
+    /* background: linear-gradient(135deg, #0f0f0f 25%, #020202 100%); */
     background-size: cover;
     margin: 0 auto;
     padding: 20px;
@@ -175,7 +176,7 @@ button:hover {
     max-width: 450px;
     padding: 20px 24px;
     border-radius: 15px;
-    background: #f3f3f3;
+    background: #1a1a1a;
     code {
         font-family: 'Fira Mono';
         color: #BBC1E1;
