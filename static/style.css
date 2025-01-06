@@ -13,7 +13,7 @@ body {
 
 .container{
     width: 400px;
-    background: linear-gradient(#212121, #212121) padding-box,
+    background: linear-gradient(#292929, #1b1b1b) padding-box,
                 linear-gradient(145deg, transparent 5%,#0eff56, #40c9ff) border-box;
     border: 2px solid transparent;
     padding: 32px 24px;
